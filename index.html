@@ -92,15 +92,12 @@
 
       function draw(data) {
         "use strict";
-        var margin = 50,
-            width = 1000 - margin,
-            height = 500 - margin,
-		    mid = width / 2 + margin;
+        var MARGIN = 50,
+            WIDTH = 1000 - MARGIN,
+            HEIGHT = 500 - MARGIN,
+		    MID = WIDTH / 2 + MARGIN;
 
         var RADIUS = 5;
-		var n_c_col = 10;
-		
-		var selected = "orange";
 		
 		/* pre-processing */
 		data = data.filter(function(d) { 
@@ -112,13 +109,6 @@
 		d3.select("body")
             .append("h2")
             .text("Titanic Passenger Demographics (Partial)");
-		
-		
-		function show(group_by) { // TODO
-		    return;
-		} 
-		
-		
 		
 		/* buttons for interaction */	
 		var button_text = ["Gender", "Ticket Class"];
@@ -138,53 +128,36 @@
 			    return d === "Gender" ? "black" : "black";
 			})
 			.style("border", function(d) {
-			    var str = "1px solid ";
-			    return d === "Gender" ? str + "orange" : str + "lightgray";
+			    var str = "2px solid ";
+			    return d === "Gender" ? str + "orangered" : str + "lightgray";
 			})
 			.text(function(d) {
 				return d;
 			});
 		
-		buttons.on("click", function(d) {
-			d3.select("table.button")
-			    .selectAll("a")
-			    .transition()
-			    .duration(100)
-				.style("color", "black")
-				.style("border", "1px solid lightgray");
-
-			d3.select(this)
-				.transition()
-				.duration(200)
-				.style("color", "black")
-				.style("border", "1px solid orange");
-				
-			show(text_to_group[d]);
-		});
-		
 
         var svg = d3.select("body")
             .append("svg")
-            .attr("width", width + margin)
-            .attr("height", height + margin);		
+            .attr("width", WIDTH + MARGIN)
+            .attr("height", HEIGHT + MARGIN);		
 		
 		/* background */
 		var g_background = svg.append('g').attr('class', 'background');
 		
 		g_background.append('rect')
 		    .attr('class', 'bg left')
-			.attr('x', margin)
-			.attr('width', width / 2)
+			.attr('x', MARGIN)
+			.attr('width', WIDTH / 2)
 			.attr('y', 0)
-			.attr('height', height + margin)
+			.attr('height', HEIGHT + MARGIN)
 			.style('fill', 'rgb(220, 220, 220)');
 			
 		g_background.append('rect')
 		    .attr('class', 'bg right')
-			.attr('x', margin + width / 2)
-			.attr('width', width / 2)
+			.attr('x', MARGIN + WIDTH / 2)
+			.attr('width', WIDTH / 2)
 			.attr('y', 0)
-			.attr('height', height + margin)
+			.attr('height', HEIGHT + MARGIN)
 			.style('fill', 'lightBlue');
 		
 		/* subtitle */
@@ -192,32 +165,22 @@
 		
 		subtitle.append('text')
 			.attr('class', 'died')
-			.attr('x', mid - 2)
-			.attr('y', margin / 2)
+			.attr('x', MID - 2)
+			.attr('y', MARGIN / 2)
 			.attr('text-anchor', 'end')
 			.text('Perished');
 			
 		subtitle.append('text')
 			.attr('class', 'surv')
-			.attr('x', mid + 2)
-			.attr('y', margin / 2)
+			.attr('x', MID + 2)
+			.attr('y', MARGIN / 2)
 			.attr('text-anchor', 'start')
 			.text('Survived');
 		
         var g_chart = svg.append('g').attr('class', 'chart');
 		
 		/* scales */
-        var count_max = data.length;
-
-        var count_scale_surv = d3.scale.linear()
-            .range([mid, width + margin])
-            .domain([0, count_max]);
-			  
-		var count_scale_died = d3.scale.linear()
-            .range([mid, margin])
-            .domain([0, count_max]);	  
 		
-		var group_by = "Pclass";
 /*			  
 		var age_max = d3.max(data, function(d) {
 		    return d.Age;
@@ -226,9 +189,10 @@
 		var y_scale_perc = d3.scale.quantile()
 			.domain([0, age_max])
 			.range(d3.range(0, 1000, 125));
-*/		  
+*/	
+/*	  
 		var y_scale_ord = d3.scale.ordinal()
-			.rangeRoundBands([0, height], .3, .1);
+			.rangeRoundBands([0, HEIGHT], .3, .1);
 			
         y_scale_ord.domain(data.map(function(d) { 
 		    return d[group_by]; 
@@ -237,8 +201,9 @@
 		//RADIUS = y_scale_ord.rangeBand() / (2.5 * n_c_col + 0.5); 
 		n_c_col = Math.floor((y_scale_ord.rangeBand() / RADIUS - 0.5) / 2.5);
 		debugger;
+*/
 		
-		/* Axes */
+		/* Axes 
 		var y_axis = d3.svg.axis()
 //			.scale(y_scale_perc)
 			.scale(y_scale_ord)
@@ -247,32 +212,14 @@
         svg.append('g')
             .attr('class', 'y axis')
             .attr('transform', 
-			      "translate(" + margin + "," + margin + ")")
+			      "translate(" + MARGIN + "," + MARGIN + ")")
             .call(y_axis);
-		/*	
-        var count_axis_surv = d3.svg.axis()
-            .scale(count_scale_surv)
-            .orient("top");
-
-        svg.append('g')
-            .attr('class', 'x axis surv-axis')
-            .attr('transform', "translate(0," + margin + ")")
-            .call(count_axis_surv);
-		
-		var count_axis_died = d3.svg.axis()
-            .scale(count_scale_died)
-            .orient("top");
-
-        svg.append('g')
-            .attr('class', 'x axis died-axis')
-            .attr('transform', "translate(0," + margin + ")")
-            .call(count_axis_died);
-		*/
+*/
 		
 		/* Circles */	
         var g_cir = svg.append('g')
 		    .attr('class', 'circles')
-			.attr('transform', 'translate(0,' + margin + ')');	
+			.attr('transform', 'translate(0,' + MARGIN + ')');	
 		
 		var tip = d3.tip()
 			.attr('class', 'cir-tip')
@@ -298,17 +245,16 @@
 			.on('mouseover', tip.show)
 			.on('mouseout', tip.hide);	
 
-		function draw_circles(g, group_data, group_by, kfunc, y_scale, 
-				middle) {
+		function draw_circles(g, group_data, group_by, y_scale, n_c_col) {
 			
 			var OFFSET = 1.5 * RADIUS;
 			var STEP = 2.5 * RADIUS;
 			
 			function get_cx(d, i) {
 			    if (is_surv(d.Survived)) {
-				    return middle + (OFFSET + Math.floor(i / n_c_col) * STEP);
+				    return MID + (OFFSET + Math.floor(i / n_c_col) * STEP);
 				} else {
-					return middle - (OFFSET + Math.floor(i / n_c_col) * STEP);
+					return MID - (OFFSET + Math.floor(i / n_c_col) * STEP);
 				}
 			}
 				
@@ -317,67 +263,71 @@
 			}
 			
 			g.selectAll("circle")
-				.data(group_data, kfunc)
+				.data(group_data, key_func)
 //			    .data(group_data.sort(function(a, b) {
 //				    return +a.Name - +b.Name;
-//				}), kfunc)
+//				}), key_func)
 				.transition()
+				.duration(700)
 				.attr('cx', get_cx)
 				.attr('cy', get_cy);
 		}
 		
 		
-		var nested = d3.nest()
-			.key(function(d) { return d['Survived']; })
-		    .key(function(d) { return d[group_by]; })
-			.entries(data)
-	
-		debugger;	
-		for (var i = 0; i <= 1; i++) {
-		    //var survived = nested[i].key;
-			for (var j = 0; j < nested[i].values.length; j++) {
-				draw_circles(g_cir, nested[i].values[j].values, group_by, 
-						key_func, y_scale_ord, mid);
-			}
-		}
-
-		/* d3 nest for Bars 
-		nested = d3.nest()
-		    .key(function(d) {
-			    return d[group_by];
-			})
-			.rollup(function(leaves) {
-			    var survived = leaves.filter(function(d) {
-					return d.Survived == "1";
-				});
+		function show(group_by, data, svg, g_cir) { 
+			var y_scale_ord = d3.scale.ordinal()
+			.rangeRoundBands([0, HEIGHT], .3, .1);
+			
+			y_scale_ord.domain(data.map(function(d) { 
+				return d[group_by]; 
+			}).sort());
+		
+			var n_c_col 
+			    = Math.floor((y_scale_ord.rangeBand() / RADIUS - 0.5) / 2.5);
 				
-				return {
-				    "survived": survived.length,
-					"died": leaves.length - survived.length
-				};
-			})
-			.entries(data)
+				
+		    //TODO: fix axis animation, to bind with data
+			var y_axis = d3.svg.axis()
+	//			.scale(y_scale_perc)
+				.scale(y_scale_ord)
+				.orient("left");
+
+			svg.append('g')
+				.attr('class', 'y axis')
+				.attr('transform', 
+					  "translate(" + MARGIN + "," + MARGIN + ")")
+				.call(y_axis);
 		
-		debugger;
+			var nested = d3.nest()
+				.key(function(d) { return d['Survived']; })
+				.key(function(d) { return d[group_by]; })
+				.entries(data)
 		
-		g_chart.selectAll("bar")
-			.data(nested)
-			.enter().append("rect")
-			.style("fill", "rgb(250, 200, 100)")
-			.style('opacity', '0.3')
-			.attr("y", function(d) { 
-			    return y_scale_ord(d.key); 
-			})
-			.attr("height", y_scale_ord.rangeBand())
-			.attr("x", function(d) { 
-			    return count_scale_died(d.values['died'])
-			})
-			.attr("width", function(d) { 
-			    return count_scale_surv(d.values['survived']) 
-					- count_scale_died(d.values['died']);
-			})
-			.attr("transform", "translate(0," + margin + ")");
-		*/	
+			debugger;	
+			for (var i = 0; i <= 1; i++) {
+				//var survived = nested[i].key;
+				for (var j = 0; j < nested[i].values.length; j++) {
+					draw_circles(g_cir, nested[i].values[j].values, group_by, 
+							y_scale_ord, n_c_col);
+				}
+			}
+		} 
+		
+		show("Sex", data, svg, g_cir);
+		
+		buttons.on("click", function(d) {
+			d3.select("table.button")
+			    .selectAll("a")
+				.style("color", "black")
+				.style("border", "2px solid lightgray");
+
+			d3.select(this)
+				.style("color", "black")
+				.style("border", "2px solid orangered");
+				
+			show(text_to_group[d], data, svg, g_cir);
+		});
+	
       };
     </script>
   </head>
