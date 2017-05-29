@@ -12,7 +12,19 @@
 		h2 {
 		  color: black;
 		  text-align: left;
-		  padding: 10px;
+		  padding: 20px;
+		}
+		
+		table.button {
+			position: fixed;
+			top: 70px;
+			left: 800px;
+		}
+
+		table.button tr td {
+			background-color: rgb(251, 201, 127);
+			padding: 3px;
+			margin: 7px;
 		}
 
 		.axis {
@@ -81,14 +93,57 @@
         var RADIUS = 4;
 		var n_c_col = 10;
 		
+		/* pre-processing */
 		data = data.filter(function(d) { 
 			return d.Age !== "" && (d.Sex === "male" || d.Sex === "female");
 		});
 		data.forEach(function(d) { d.Age = +d.Age; });
 		
+		/* title */
 		d3.select("body")
             .append("h2")
             .text("Titanic Passenger Demographics (Partial)");
+		
+		
+		function animate(group_by) { // TODO
+		    return;
+		} 
+		
+		
+		
+		/* buttons for interaction */	
+		var button_text = ["Gender", "Ticket Class"];
+		var text_to_group = {"Gender": "Sex", "Ticket Class": "Pclass"};
+		
+		var buttons = d3.select("body")
+			.append("table")
+			.attr("class", "button")
+			.append("tr")
+			.selectAll("td")
+			.data(button_text)
+			.enter()
+			.append("td")
+			.text(function(d) {
+				return d;
+			});
+		
+		buttons.on("click", function(d) {
+			d3.select(".button")
+			    .selectAll("td")
+			    .transition()
+			    .duration(200)
+				.style("color", "black")
+				.style("background", "rgb(251, 201, 127)");
+
+			d3.select(this)
+				.transition()
+				.duration(200)
+				.style("background", "lightBlue")
+				.style("color", "white");
+				
+			animate(text_to_group[d]);
+		});
+		
 
         var svg = d3.select("body")
             .append("svg")
@@ -155,7 +210,7 @@
 			.range(d3.range(0, 1000, 125));
 */		  
 		var y_scale_ord = d3.scale.ordinal()
-			.rangeRoundBands([0, height], .5, .1);
+			.rangeRoundBands([0, height], .3, .1);
 			
         y_scale_ord.domain(data.map(function(d) { 
 		    return d[group_by]; 
