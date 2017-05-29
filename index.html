@@ -21,10 +21,17 @@
 			left: 800px;
 		}
 
-		table.button tr td {
-			background-color: rgb(251, 201, 127);
+		a.button {
 			padding: 3px;
 			margin: 7px;
+		}
+		
+		a:link {
+		    text-decoration: none;
+		}
+		
+		a:hover {
+			background-color: orange;
 		}
 
 		.axis {
@@ -34,7 +41,7 @@
 
 		path {
 		  fill: none;
-		  stroke: gray;
+		  stroke: lightgray;
 		  stroke-width: 1px;
 		}
 
@@ -90,8 +97,10 @@
             height = 500 - margin,
 		    mid = width / 2 + margin;
 
-        var RADIUS = 4;
+        var RADIUS = 5;
 		var n_c_col = 10;
+		
+		var selected = "orange";
 		
 		/* pre-processing */
 		data = data.filter(function(d) { 
@@ -105,7 +114,7 @@
             .text("Titanic Passenger Demographics (Partial)");
 		
 		
-		function animate(group_by) { // TODO
+		function show(group_by) { // TODO
 		    return;
 		} 
 		
@@ -119,29 +128,38 @@
 			.append("table")
 			.attr("class", "button")
 			.append("tr")
-			.selectAll("td")
+			.selectAll("a")
 			.data(button_text)
 			.enter()
-			.append("td")
+			.append("a")
+			.attr("class", "button")
+			.attr("href", "#")
+			.style("color", function(d) {
+			    return d === "Gender" ? "black" : "black";
+			})
+			.style("border", function(d) {
+			    var str = "1px solid ";
+			    return d === "Gender" ? str + "orange" : str + "lightgray";
+			})
 			.text(function(d) {
 				return d;
 			});
 		
 		buttons.on("click", function(d) {
-			d3.select(".button")
-			    .selectAll("td")
+			d3.select("table.button")
+			    .selectAll("a")
 			    .transition()
-			    .duration(200)
+			    .duration(100)
 				.style("color", "black")
-				.style("background", "rgb(251, 201, 127)");
+				.style("border", "1px solid lightgray");
 
 			d3.select(this)
 				.transition()
 				.duration(200)
-				.style("background", "lightBlue")
-				.style("color", "white");
+				.style("color", "black")
+				.style("border", "1px solid orange");
 				
-			animate(text_to_group[d]);
+			show(text_to_group[d]);
 		});
 		
 
@@ -199,7 +217,7 @@
             .range([mid, margin])
             .domain([0, count_max]);	  
 		
-		var group_by = "Sex";
+		var group_by = "Pclass";
 /*			  
 		var age_max = d3.max(data, function(d) {
 		    return d.Age;
