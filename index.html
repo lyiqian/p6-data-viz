@@ -103,7 +103,10 @@
 		data = data.filter(function(d) { 
 			return d.Age !== "" && (d.Sex === "male" || d.Sex === "female");
 		});
-		data.forEach(function(d) { d.Age = +d.Age; });
+		data.forEach(function(d) { 
+		    d.Age = +d.Age;
+		    d.Pclass = 'Class ' + d.Pclass;
+		});
 		
 		/* title */
 		d3.select("body")
@@ -215,7 +218,12 @@
 			      "translate(" + MARGIN + "," + MARGIN + ")")
             .call(y_axis);
 */
-		
+
+        svg.append('g')
+            .attr('class', 'y axis')
+            .attr('transform',
+			      'translate(' + MARGIN + ',' + MARGIN + ')');
+
 		/* Circles */	
         var g_cir = svg.append('g')
 		    .attr('class', 'circles')
@@ -291,11 +299,10 @@
 	//			.scale(y_scale_perc)
 				.scale(y_scale_ord)
 				.orient("left");
-
-			svg.append('g')
-				.attr('class', 'y axis')
-				.attr('transform', 
-					  "translate(" + MARGIN + "," + MARGIN + ")")
+			
+			svg.select('g.axis')
+			    .transition()
+				.duration(700)
 				.call(y_axis);
 		
 			var nested = d3.nest()
