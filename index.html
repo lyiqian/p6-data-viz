@@ -16,6 +16,7 @@
         }
         
         table.button {
+          font-size: 0.8em;
           position: fixed;
           top: 80px;
           left: 50px;
@@ -35,7 +36,6 @@
         }
 
         .axis {
-          font-family: Georgia;
           font-size: 0.8em;
         }
 
@@ -49,21 +49,22 @@
           fill: none;
           stroke: black;
         }
-
-        circle {
-          opacity: 1;
-          stroke: none;
+        
+        text {
+          align-baseline: middle;
         }
         
         .surv{
           fill: orange;
           color: orange;
+          text-anchor: start;
           font-weight: bold;
         }
         
         .died{
           fill: rgb(100,100,100);
           color: rgb(100,100,100);
+          text-anchor: end;
           font-weight: bold;
         }
         
@@ -77,7 +78,6 @@
         .cir-tip {
           line-height: 1;
           font-size: 12px;
-          font-weight: bold;
           padding: 5px;
           background: rgba(0, 0, 0, 0.5);
           color: #fff;
@@ -90,8 +90,6 @@
     </style>
 
     <script type="text/javascript">
-      format = d3.time.format("%d-%m-%Y (%H:%M h)");
-
       function draw(data) {
         "use strict";
         var MARGIN = 50,
@@ -104,9 +102,7 @@
         var STEP = 2.5 * RADIUS;
         
         var DEFAULT_GROUP = "Sex";
-        
 
-        
         /* pre-processing */
         data = data.filter(function(d) { 
             return d.Age !== "" && (d.Sex === "male" || d.Sex === "female");
@@ -135,15 +131,12 @@
         var buttons = button_table.append("td")
             .selectAll("a")
             .data(button_text)
-            .enter()
-            .append("a")
+            .enter().append("a")
             .attr("class", "button")
             .attr("href", "#")
-            .style("color", function(d) {
-                return d === "Gender" ? "black" : "black";
-            })
+            .style("color", 'black')
             .style("border", function(d) {
-                var str = "2px solid ";
+                var str = "1.5px solid ";
                 return d === "Gender" ? str + "orangered" : str + "lightgray";
             })
             .text(function(d) {
@@ -183,14 +176,12 @@
             .attr('class', 'died')
             .attr('x', MID - 2)
             .attr('y', MARGIN / 2)
-            .attr('text-anchor', 'end')
             .text('Perished');
             
         subtitle.append('text')
             .attr('class', 'surv')
             .attr('x', MID + 2)
             .attr('y', MARGIN / 2)
-            .attr('text-anchor', 'start')
             .text('Survived');
         
 //        var g_chart = svg.append('g').attr('class', 'chart');
@@ -227,8 +218,7 @@
 
         svg.append('g')
             .attr('class', 'y axis')
-            .attr('transform',
-                  'translate(' + MARGIN + ',' + MARGIN + ')');
+            .attr('transform', 'translate(' + MARGIN + ',' + MARGIN + ')');
 
         /* Counts */
         var g_count = svg.append('g')
@@ -243,7 +233,10 @@
         var tip = d3.tip()
             .attr('class', 'cir-tip')
             .offset([- 0.5 * RADIUS, 0])
-            .html(function(d) { return d.Name; });
+            .html(function(d) { 
+                return d.Name; 
+            });
+            
         g_cir.call(tip);
 
         function is_surv(survived) {
@@ -264,12 +257,9 @@
             .on('mouseover', tip.show)
             .on('mouseout', tip.hide);
 			
-		function get_x_pos(surv_died, ind, n_c_col) {
-		    if (is_surv(surv_died)) {
-                return MID + (OFFSET + Math.floor(ind / n_c_col) * STEP);
-            } else {
-                return MID - (OFFSET + Math.floor(ind / n_c_col) * STEP);
-            }
+		function get_x_pos(x_val, ind, n_c_col) {
+            var dir = is_surv(x_val) ? 1 : -1;
+            return MID + dir * (OFFSET + Math.floor(ind / n_c_col) * STEP);
 		}
         
         function get_y_pos(y_val, ind, n_c_col, y_scale) {
@@ -277,14 +267,9 @@
         }
 
         function draw_circles(g, group_data, group_by, y_scale, n_c_col) {
-            
-            var OFFSET = 1.5 * RADIUS;
-            var STEP = 2.5 * RADIUS;
-            
             g.selectAll("circle")
                 .data(group_data, key_func)
-                .transition()
-                .duration(700)
+                .transition().duration(700)
                 .attr('cx', function(d, i) {
                     return get_x_pos(d.Survived, i, n_c_col);
                 })
@@ -295,26 +280,26 @@
         
         
         function show(group_by, data, svg, g_cir, g_count) { 
+            /* scales & axes */
             var y_scale = d3.scale.ordinal()
             .rangeRoundBands([0, HEIGHT], .25, .15);
             
             y_scale.domain(data.map(function(d) { 
                 return d[group_by]; 
             }).sort());
-        
-            var n_c_col 
-                = Math.floor((y_scale.rangeBand() / RADIUS - 0.5) / 2.5);
-                
+            
             var y_axis = d3.svg.axis()
     //          .scale(y_scale_perc)
                 .scale(y_scale)
                 .orient("left");
             
             svg.select('g.axis')
-                .transition()
-                .duration(700)
+                .transition().duration(700)
                 .call(y_axis);
-        
+            
+            var n_c_col 
+                = Math.floor((y_scale.rangeBand() / RADIUS - 0.5) / 2.5);
+
             var nested = d3.nest()
                 .key(function(d) { return d['Survived']; })
                 .key(function(d) { return d[group_by]; })
@@ -327,6 +312,7 @@
                 for (var j = 0; j < nested[i].values.length; j++) {
                     draw_circles(g_cir, nested[i].values[j].values, group_by, 
                             y_scale, n_c_col);
+                    
                     count.push({
                         'Survived': nested[i].key,
                         'Group': nested[i].values[j].key,
@@ -335,60 +321,43 @@
                 }
             }
             
-            debugger;   
             var count_labels = g_count.selectAll('text')
                 .data(count, function(d) {
                     return d.Survived + d.Group;
                 });
-                
-            count_labels.enter()
-                .append('text')
+            
+            function count_x_pos(d) {
+                return get_x_pos(d.Survived, d.Count + n_c_col * 2 - 1, n_c_col);
+            }
+            
+            function count_y_pos(d) {
+                var start = get_y_pos(d.Group, 0, n_c_col, y_scale);
+                var end = get_y_pos(d.Group, n_c_col - 1, n_c_col, y_scale);
+                return (start + end) / 2.0;
+            }
+            
+            count_labels.enter().append('text')
                 .attr('class', function(d) {
                     return is_surv(d.Survived) ? 'surv' : 'died';
                 })
-                .attr('align-baseline', 'middle')
-                .attr('text-anchor', function(d) {
-                    return is_surv(d.Survived) ? 'start' : 'end';
-                })
-                .attr('x', function(d) {
-                    return get_x_pos(d.Survived, d.Count + n_c_col * 2 - 1, 
-                            n_c_col);
-                })
-                .attr('y', function(d) {
-                    var start = get_y_pos(d.Group, 0, n_c_col, y_scale);
-                    var end = get_y_pos(d.Group, n_c_col - 1, n_c_col, y_scale);
-                    return (start + end) / 2.0;
-                })
+                .attr('x', count_x_pos)
+                .attr('y', count_y_pos)
                 .text(function(d) {
                     return d.Count;
                 })
             
-            count_labels.transition()
-                .duration(350)
+            count_labels.transition().duration(350)
                 .attr('opacity', '0');
                 
-            count_labels.attr('x', function(d) {
-                    return get_x_pos(d.Survived, d.Count + n_c_col * 2 - 1, 
-                            n_c_col);
-                })
-                .attr('y', function(d) {
-                    var start = get_y_pos(d.Group, 0, n_c_col, y_scale);
-                    var end = get_y_pos(d.Group, n_c_col - 1, n_c_col, y_scale);
-                    return (start + end) / 2.0;
-                })
-                .transition()
-                .delay(350)
-                .duration(350)
+            count_labels.attr('x', count_x_pos)
+                .attr('y', count_y_pos)
+                .transition().delay(350).duration(350)
                 .attr('opacity', '1');
             
             count_labels.exit()
-                .transition()
-                .duration(350)
+                .transition().duration(350)
                 .attr('opacity', '0')
                 .remove();
-            
-            
-                
         } 
         
         show(DEFAULT_GROUP, data, svg, g_cir, g_count);
@@ -396,12 +365,10 @@
         buttons.on("click", function(d) {
             d3.select("table.button")
                 .selectAll("a")
-                .style("color", "black")
-                .style("border", "2px solid lightgray");
+                .style("border", "1.5px solid lightgray");
 
             d3.select(this)
-                .style("color", "black")
-                .style("border", "2px solid orangered");
+                .style("border", "1.5px solid orangered");
                 
             show(text_to_group[d], data, svg, g_cir, g_count);
         });
