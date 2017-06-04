@@ -3,89 +3,89 @@
   <head>
     <meta charset="utf-8">
     <script src="http://d3js.org/d3.v3.min.js"></script>
-	<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
-	<style>
-	    body {
-		  font-family: Georgia;
-		}
-		
-		h2 {
-		  color: black;
-		  text-align: left;
-		  padding: 20px;
-		}
-		
-		table.button {
-			position: fixed;
-			top: 70px;
-			left: 750px;
-		}
+    <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+    <style>
+        body {
+          font-family: Georgia;
+        }
+        
+        h2 {
+          color: black;
+          text-align: left;
+          padding: 20px;
+        }
+        
+        table.button {
+          position: fixed;
+          top: 70px;
+          left: 750px;
+        }
 
-		a.button {
-			padding: 3px;
-			margin: 7px;
-		}
-		
-		a:link {
-		    text-decoration: none;
-		}
-		
-		a:hover {
-			background-color: orange;
-		}
+        a.button {
+          padding: 3px;
+          margin: 7px;
+        }
+        
+        a:link {
+          text-decoration: none;
+        }
+        
+        a:hover {
+          background-color: orange;
+        }
 
-		.axis {
-		  font-family: Georgia;
-		  font-size: 0.8em;
-		}
+        .axis {
+          font-family: Georgia;
+          font-size: 0.8em;
+        }
 
-		path {
-		  fill: none;
-		  stroke: lightgray;
-		  stroke-width: 1px;
-		}
+        path {
+          fill: none;
+          stroke: lightgray;
+          stroke-width: 1px;
+        }
 
-		.tick {
-		  fill: none;
-		  stroke: black;
-		}
+        .tick {
+          fill: none;
+          stroke: black;
+        }
 
-		circle {
-		  opacity: 1;
-		  stroke: none;
-		}
-		.surv{
-		  fill: orange;
-		  color: orange;
-		  font-weight: bold;
-		}
-		.died{
-		  fill: rgb(100,100,100);
-		  color: rgb(100,100,100);
-		  font-weight: bold;
-		}
-		
-		circle.surv:hover {
-		  fill: orangered;
-		}
-		circle.died:hover {
-		  fill: rgb(0,0,0);
-		}
-		
-		.cir-tip {
-		  line-height: 1;
-		  font-size: 12px;
-		  font-weight: bold;
-		  padding: 5px;
-		  background: rgba(0, 0, 0, 0.5);
-		  color: #fff;
-		  border-radius: 10px;
-		}
+        circle {
+          opacity: 1;
+          stroke: none;
+        }
+        .surv{
+          fill: orange;
+          color: orange;
+          font-weight: bold;
+        }
+        .died{
+          fill: rgb(100,100,100);
+          color: rgb(100,100,100);
+          font-weight: bold;
+        }
+        
+        circle.surv:hover {
+          fill: orangered;
+        }
+        circle.died:hover {
+          fill: rgb(0,0,0);
+        }
+        
+        .cir-tip {
+          line-height: 1;
+          font-size: 12px;
+          font-weight: bold;
+          padding: 5px;
+          background: rgba(0, 0, 0, 0.5);
+          color: #fff;
+          border-radius: 10px;
+        }
 
-		.bg {
-		  opacity: 0.5;
-		}
-	</style>
+        .bg {
+          opacity: 0.5;
+        }
+    </style>
 
     <script type="text/javascript">
       format = d3.time.format("%d-%m-%Y (%H:%M h)");
@@ -95,313 +95,313 @@
         var MARGIN = 50,
             WIDTH = 1000 - MARGIN,
             HEIGHT = 500 - MARGIN,
-		    MID = WIDTH / 2 + MARGIN;
+            MID = WIDTH / 2 + MARGIN;
         
-		var RADIUS = 5;
-		var OFFSET = 1.5 * RADIUS;
-		var STEP = 2.5 * RADIUS;
-		
-		var DEFAULT_GROUP = "Sex";
-		
+        var RADIUS = 5;
+        var OFFSET = 1.5 * RADIUS;
+        var STEP = 2.5 * RADIUS;
+        
+        var DEFAULT_GROUP = "Sex";
+        
 
-		
-		/* pre-processing */
-		data = data.filter(function(d) { 
-			return d.Age !== "" && (d.Sex === "male" || d.Sex === "female");
-		});
-		data.forEach(function(d) { 
-		    d.Age = +d.Age;
-		    d.Pclass = 'Class ' + d.Pclass;
-		});
-		
-		/* title */
-		d3.select("body")
+        
+        /* pre-processing */
+        data = data.filter(function(d) { 
+            return d.Age !== "" && (d.Sex === "male" || d.Sex === "female");
+        });
+        data.forEach(function(d) { 
+            d.Age = +d.Age;
+            d.Pclass = 'Class ' + d.Pclass;
+        });
+        
+        /* title */
+        d3.select("body")
             .append("h2")
             .text("Titanic Passenger Demographics (Partial)");
-		
-		/* buttons for interaction */	
-		var button_text = ["Gender", "Ticket Class"];
-		var text_to_group = {"Gender": "Sex", "Ticket Class": "Pclass"};
-		var button_table = d3.select('body')
-		    .append('table')
-			.attr('class', 'button')
-			.append('tr')
-			
-		button_table.append('td')
-		    .text('Group By: ');
-			
-		var buttons = button_table.append("td")
-			.selectAll("a")
-			.data(button_text)
-			.enter()
-			.append("a")
-			.attr("class", "button")
-			.attr("href", "#")
-			.style("color", function(d) {
-			    return d === "Gender" ? "black" : "black";
-			})
-			.style("border", function(d) {
-			    var str = "2px solid ";
-			    return d === "Gender" ? str + "orangered" : str + "lightgray";
-			})
-			.text(function(d) {
-				return d;
-			});
-		
+        
+        /* buttons for interaction */   
+        var button_text = ["Gender", "Ticket Class"];
+        var text_to_group = {"Gender": "Sex", "Ticket Class": "Pclass"};
+        var button_table = d3.select('body')
+            .append('table')
+            .attr('class', 'button')
+            .append('tr')
+            
+        button_table.append('td')
+            .text('Group By: ');
+            
+        var buttons = button_table.append("td")
+            .selectAll("a")
+            .data(button_text)
+            .enter()
+            .append("a")
+            .attr("class", "button")
+            .attr("href", "#")
+            .style("color", function(d) {
+                return d === "Gender" ? "black" : "black";
+            })
+            .style("border", function(d) {
+                var str = "2px solid ";
+                return d === "Gender" ? str + "orangered" : str + "lightgray";
+            })
+            .text(function(d) {
+                return d;
+            });
+        
 
         var svg = d3.select("body")
             .append("svg")
             .attr("width", WIDTH + MARGIN)
-            .attr("height", HEIGHT + MARGIN);		
-		
-		/* background */
-		var g_background = svg.append('g').attr('class', 'background');
-		
-		g_background.append('rect')
-		    .attr('class', 'bg left')
-			.attr('x', MARGIN)
-			.attr('width', WIDTH / 2)
-			.attr('y', 0)
-			.attr('height', HEIGHT + MARGIN)
-			.style('fill', 'rgb(220, 220, 220)');
-			
-		g_background.append('rect')
-		    .attr('class', 'bg right')
-			.attr('x', MARGIN + WIDTH / 2)
-			.attr('width', WIDTH / 2)
-			.attr('y', 0)
-			.attr('height', HEIGHT + MARGIN)
-			.style('fill', 'lightBlue');
-		
-		/* subtitle */
-		var subtitle = svg.append('g')
-		    .attr('class', 'subtitle');
-		
-		subtitle.append('text')
-			.attr('class', 'died')
-			.attr('x', MID - 2)
-			.attr('y', MARGIN / 2)
-			.attr('text-anchor', 'end')
-			.text('Perished');
-			
-		subtitle.append('text')
-			.attr('class', 'surv')
-			.attr('x', MID + 2)
-			.attr('y', MARGIN / 2)
-			.attr('text-anchor', 'start')
-			.text('Survived');
-		
+            .attr("height", HEIGHT + MARGIN);       
+        
+        /* background */
+        var g_background = svg.append('g').attr('class', 'background');
+        
+        g_background.append('rect')
+            .attr('class', 'bg left')
+            .attr('x', MARGIN)
+            .attr('width', WIDTH / 2)
+            .attr('y', 0)
+            .attr('height', HEIGHT + MARGIN)
+            .style('fill', 'rgb(220, 220, 220)');
+            
+        g_background.append('rect')
+            .attr('class', 'bg right')
+            .attr('x', MARGIN + WIDTH / 2)
+            .attr('width', WIDTH / 2)
+            .attr('y', 0)
+            .attr('height', HEIGHT + MARGIN)
+            .style('fill', 'lightBlue');
+        
+        /* subtitle */
+        var subtitle = svg.append('g')
+            .attr('class', 'subtitle');
+        
+        subtitle.append('text')
+            .attr('class', 'died')
+            .attr('x', MID - 2)
+            .attr('y', MARGIN / 2)
+            .attr('text-anchor', 'end')
+            .text('Perished');
+            
+        subtitle.append('text')
+            .attr('class', 'surv')
+            .attr('x', MID + 2)
+            .attr('y', MARGIN / 2)
+            .attr('text-anchor', 'start')
+            .text('Survived');
+        
 //        var g_chart = svg.append('g').attr('class', 'chart');
-		
-		/* scales */		
-/*			  
-		var age_max = d3.max(data, function(d) {
-		    return d.Age;
-		});
-			  		  
-		var y_scale_perc = d3.scale.quantile()
-			.domain([0, age_max])
-			.range(d3.range(0, 1000, 125));
-*/	
-/*	  
-		var y_scale_ord = d3.scale.ordinal()
-			.rangeRoundBands([0, HEIGHT], .3, .1);
-			
+        
+        /* scales */        
+/*            
+        var age_max = d3.max(data, function(d) {
+            return d.Age;
+        });
+                      
+        var y_scale_perc = d3.scale.quantile()
+            .domain([0, age_max])
+            .range(d3.range(0, 1000, 125));
+*/  
+/*    
+        var y_scale_ord = d3.scale.ordinal()
+            .rangeRoundBands([0, HEIGHT], .3, .1);
+            
         y_scale_ord.domain(data.map(function(d) { 
-		    return d[group_by]; 
-		}).sort());
+            return d[group_by]; 
+        }).sort());
 
-		//RADIUS = y_scale_ord.rangeBand() / (2.5 * n_c_col + 0.5); 
-		n_c_col = Math.floor((y_scale_ord.rangeBand() / RADIUS - 0.5) / 2.5);
-		debugger;
+        //RADIUS = y_scale_ord.rangeBand() / (2.5 * n_c_col + 0.5); 
+        n_c_col = Math.floor((y_scale_ord.rangeBand() / RADIUS - 0.5) / 2.5);
+        debugger;
 */
-		
-		/* Axes 
-		var y_axis = d3.svg.axis()
-//			.scale(y_scale_perc)
-			.scale(y_scale_ord)
-			.orient("left");
+        
+        /* Axes 
+        var y_axis = d3.svg.axis()
+//          .scale(y_scale_perc)
+            .scale(y_scale_ord)
+            .orient("left");
 */
 
         svg.append('g')
             .attr('class', 'y axis')
             .attr('transform',
-			      'translate(' + MARGIN + ',' + MARGIN + ')');
+                  'translate(' + MARGIN + ',' + MARGIN + ')');
 
-		/* Counts */
-		var g_count = svg.append('g')
-		    .attr('class', 'count')
-			.attr('transform', 'translate(0,' + MARGIN + ')');
-			
-		/* Circles */	
+        /* Counts */
+        var g_count = svg.append('g')
+            .attr('class', 'count')
+            .attr('transform', 'translate(0,' + MARGIN + ')');
+            
+        /* Circles */   
         var g_cir = svg.append('g')
-		    .attr('class', 'circles')
-			.attr('transform', 'translate(0,' + MARGIN + ')');	
-		
-		var tip = d3.tip()
-			.attr('class', 'cir-tip')
-			.offset([- 0.5 * RADIUS, 0])
-			.html(function(d) { return d.Name; });
-		g_cir.call(tip);
+            .attr('class', 'circles')
+            .attr('transform', 'translate(0,' + MARGIN + ')');  
+        
+        var tip = d3.tip()
+            .attr('class', 'cir-tip')
+            .offset([- 0.5 * RADIUS, 0])
+            .html(function(d) { return d.Name; });
+        g_cir.call(tip);
 
-		function is_surv(survived) {
-			return survived == "1" ? true : false;
-		}	
-		
-		function key_func(d) {
+        function is_surv(survived) {
+            return survived == "1" ? true : false;
+        }   
+        
+        function key_func(d) {
             return d.PassengerId;
-        }	
+        }   
 
         g_cir.selectAll("circle")
             .data(data, key_func)
             .enter().append("circle")
-			.attr('class', function(d) {
-			    return is_surv(d.Survived) ? 'surv' : 'died';
-			})
-			.attr('r', RADIUS)
-			.on('mouseover', tip.show)
-			.on('mouseout', tip.hide);
+            .attr('class', function(d) {
+                return is_surv(d.Survived) ? 'surv' : 'died';
+            })
+            .attr('r', RADIUS)
+            .on('mouseover', tip.show)
+            .on('mouseout', tip.hide);
 
-		function draw_circles(g, group_data, group_by, y_scale, n_c_col) {
-			
-			var OFFSET = 1.5 * RADIUS;
-			var STEP = 2.5 * RADIUS;
-			
-			function get_cx(d, i) {
-			    if (is_surv(d.Survived)) {
-				    return MID + (OFFSET + Math.floor(i / n_c_col) * STEP);
-				} else {
-					return MID - (OFFSET + Math.floor(i / n_c_col) * STEP);
-				}
-			}
-				
-			function get_cy(d, i) {
-			    return y_scale(d[group_by]) + OFFSET + (i % n_c_col) * STEP;
-			}
-			
-			g.selectAll("circle")
-				.data(group_data, key_func)
-//			    .data(group_data.sort(function(a, b) {
-//				    return +a.Name - +b.Name;
-//				}), key_func)
-				.transition()
-				.duration(700)
-				.attr('cx', get_cx)
-				.attr('cy', get_cy);
-		}
-		
-		
-		function show(group_by, data, svg, g_cir, g_count) { 
-			var y_scale_ord = d3.scale.ordinal()
-			.rangeRoundBands([0, HEIGHT], .3, .1); // TODO: change .3
-			
-			y_scale_ord.domain(data.map(function(d) { 
-				return d[group_by]; 
-			}).sort());
-		
-			var n_c_col 
-			    = Math.floor((y_scale_ord.rangeBand() / RADIUS - 0.5) / 2.5);
-				
-			var y_axis = d3.svg.axis()
-	//			.scale(y_scale_perc)
-				.scale(y_scale_ord)
-				.orient("left");
-			
-			svg.select('g.axis')
-			    .transition()
-				.duration(700)
-				.call(y_axis);
-		
-			var nested = d3.nest()
-				.key(function(d) { return d['Survived']; })
-				.key(function(d) { return d[group_by]; })
-				.entries(data)
-								
-			var count = Array()
-				
-			for (var i = 0; i <= 1; i++) {
-				//var survived = nested[i].key;
-				for (var j = 0; j < nested[i].values.length; j++) {
-					draw_circles(g_cir, nested[i].values[j].values, group_by, 
-							y_scale_ord, n_c_col);
-					count.push({
-					    'Survived': nested[i].key,
-						'Group': nested[i].values[j].key,
-						'Count': nested[i].values[j].values.length
-					});
-				}
-			}
-			
-			function get_x(d, i) {
-				if (is_surv(d.Survived)) {
-					return MID + (OFFSET + Math.floor(i / n_c_col) * STEP);
-				} else {
-					return MID - (OFFSET + Math.floor(i / n_c_col) * STEP);
-				}
-			}
-			
-			function get_y(d, i) {
-			    return y_scale_ord(d.Group) + OFFSET + (i % n_c_col) * STEP;
-			}
-			
-						debugger;	
-			var count_labels = g_count.selectAll('text')
-			    .data(count);
-				
-			count_labels.enter()
-			    .append('text')
-				.attr('class', function(d) {
-					return is_surv(d.Survived) ? 'surv' : 'died';
-				})
-				.attr('align-baseline', 'middle')
-				.attr('text-anchor', function(d) {
-				    return is_surv(d.Survived) ? 'start' : 'end';
-				})
-				.attr('x', function(d) {
-				    return get_x(d, d.Count + n_c_col * 2);
-				})
-				.attr('y', function(d) {
-				    return (get_y(d, 0) + get_y(d, n_c_col - 1)) / 2.0;
-				})
-				.text(function(d) {
-				    return d.Count;
-				})
-			/*
-				.transition()
-				.attr('opacity', '0');
-				.transition()
-				.attr('opacity', '1')
-				.attr('
-			*/
-			
-				
-		} 
-		
-		show(DEFAULT_GROUP, data, svg, g_cir, g_count);
-		
-		buttons.on("click", function(d) {
-			d3.select("table.button")
-			    .selectAll("a")
-				.style("color", "black")
-				.style("border", "2px solid lightgray");
+        function draw_circles(g, group_data, group_by, y_scale, n_c_col) {
+            
+            var OFFSET = 1.5 * RADIUS;
+            var STEP = 2.5 * RADIUS;
+            
+            function get_cx(d, i) {
+                if (is_surv(d.Survived)) {
+                    return MID + (OFFSET + Math.floor(i / n_c_col) * STEP);
+                } else {
+                    return MID - (OFFSET + Math.floor(i / n_c_col) * STEP);
+                }
+            }
+                
+            function get_cy(d, i) {
+                return y_scale(d[group_by]) + OFFSET + (i % n_c_col) * STEP;
+            }
+            
+            g.selectAll("circle")
+                .data(group_data, key_func)
+//              .data(group_data.sort(function(a, b) {
+//                  return +a.Name - +b.Name;
+//              }), key_func)
+                .transition()
+                .duration(700)
+                .attr('cx', get_cx)
+                .attr('cy', get_cy);
+        }
+        
+        
+        function show(group_by, data, svg, g_cir, g_count) { 
+            var y_scale_ord = d3.scale.ordinal()
+            .rangeRoundBands([0, HEIGHT], .3, .1); // TODO: change .3
+            
+            y_scale_ord.domain(data.map(function(d) { 
+                return d[group_by]; 
+            }).sort());
+        
+            var n_c_col 
+                = Math.floor((y_scale_ord.rangeBand() / RADIUS - 0.5) / 2.5);
+                
+            var y_axis = d3.svg.axis()
+    //          .scale(y_scale_perc)
+                .scale(y_scale_ord)
+                .orient("left");
+            
+            svg.select('g.axis')
+                .transition()
+                .duration(700)
+                .call(y_axis);
+        
+            var nested = d3.nest()
+                .key(function(d) { return d['Survived']; })
+                .key(function(d) { return d[group_by]; })
+                .entries(data)
+                                
+            var count = Array()
+                
+            for (var i = 0; i <= 1; i++) {
+                //var survived = nested[i].key;
+                for (var j = 0; j < nested[i].values.length; j++) {
+                    draw_circles(g_cir, nested[i].values[j].values, group_by, 
+                            y_scale_ord, n_c_col);
+                    count.push({
+                        'Survived': nested[i].key,
+                        'Group': nested[i].values[j].key,
+                        'Count': nested[i].values[j].values.length
+                    });
+                }
+            }
+            
+            function get_x(d, i) {
+                if (is_surv(d.Survived)) {
+                    return MID + (OFFSET + Math.floor(i / n_c_col) * STEP);
+                } else {
+                    return MID - (OFFSET + Math.floor(i / n_c_col) * STEP);
+                }
+            }
+            
+            function get_y(d, i) {
+                return y_scale_ord(d.Group) + OFFSET + (i % n_c_col) * STEP;
+            }
+            
+            debugger;   
+            var count_labels = g_count.selectAll('text')
+                .data(count);
+                
+            count_labels.enter()
+                .append('text')
+                .attr('class', function(d) {
+                    return is_surv(d.Survived) ? 'surv' : 'died';
+                })
+                .attr('align-baseline', 'middle')
+                .attr('text-anchor', function(d) {
+                    return is_surv(d.Survived) ? 'start' : 'end';
+                })
+                .attr('x', function(d) {
+                    return get_x(d, d.Count + n_c_col * 2);
+                })
+                .attr('y', function(d) {
+                    return (get_y(d, 0) + get_y(d, n_c_col - 1)) / 2.0;
+                })
+                .text(function(d) {
+                    return d.Count;
+                })
+            /*
+                .transition()
+                .attr('opacity', '0');
+                .transition()
+                .attr('opacity', '1')
+                .attr('
+            */
+            
+                
+        } 
+        
+        show(DEFAULT_GROUP, data, svg, g_cir, g_count);
+        
+        buttons.on("click", function(d) {
+            d3.select("table.button")
+                .selectAll("a")
+                .style("color", "black")
+                .style("border", "2px solid lightgray");
 
-			d3.select(this)
-				.style("color", "black")
-				.style("border", "2px solid orangered");
-				
-			show(text_to_group[d], data, svg, g_cir, g_count);
-		});
-	
+            d3.select(this)
+                .style("color", "black")
+                .style("border", "2px solid orangered");
+                
+            show(text_to_group[d], data, svg, g_cir, g_count);
+        });
+    
       };
     </script>
   </head>
 <body>
   <script type="text/javascript">
-  /*
+    /*
     Use D3 (not dimple.js) to load the TSV file
     and pass the contents of it to the draw function
     */
-  d3.csv("titanic_data.csv", draw);
+    d3.csv("titanic_data.csv", draw);
   </script>
 </body>
 </html>
