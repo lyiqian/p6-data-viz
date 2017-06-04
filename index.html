@@ -18,7 +18,7 @@
 		table.button {
 			position: fixed;
 			top: 70px;
-			left: 800px;
+			left: 750px;
 		}
 
 		a.button {
@@ -116,11 +116,15 @@
 		/* buttons for interaction */	
 		var button_text = ["Gender", "Ticket Class"];
 		var text_to_group = {"Gender": "Sex", "Ticket Class": "Pclass"};
-		
-		var buttons = d3.select("body")
-			.append("table")
-			.attr("class", "button")
-			.append("tr")
+		var button_table = d3.select('body')
+		    .append('table')
+			.attr('class', 'button')
+			.append('tr')
+			
+		button_table.append('td')
+		    .text('Group By: ');
+			
+		var buttons = button_table.append("td")
 			.selectAll("a")
 			.data(button_text)
 			.enter()
@@ -309,7 +313,7 @@
 				.key(function(d) { return d['Survived']; })
 				.key(function(d) { return d[group_by]; })
 				.entries(data)
-		
+				
 			debugger;	
 			for (var i = 0; i <= 1; i++) {
 				//var survived = nested[i].key;
