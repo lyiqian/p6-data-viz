@@ -17,13 +17,13 @@
         
         table.button {
           position: fixed;
-          top: 70px;
-          left: 750px;
+          top: 80px;
+          left: 50px;
         }
 
-        a.button {
-          padding: 3px;
-          margin: 7px;
+        a {
+          padding: 2px;
+          margin: 5px;
         }
         
         a:link {
@@ -54,11 +54,13 @@
           opacity: 1;
           stroke: none;
         }
+        
         .surv{
           fill: orange;
           color: orange;
           font-weight: bold;
         }
+        
         .died{
           fill: rgb(100,100,100);
           color: rgb(100,100,100);
@@ -97,7 +99,7 @@
             HEIGHT = 500 - MARGIN,
             MID = WIDTH / 2 + MARGIN;
         
-        var RADIUS = 5;
+        var RADIUS = 4.7;
         var OFFSET = 1.5 * RADIUS;
         var STEP = 2.5 * RADIUS;
         
@@ -294,7 +296,7 @@
         
         function show(group_by, data, svg, g_cir, g_count) { 
             var y_scale = d3.scale.ordinal()
-            .rangeRoundBands([0, HEIGHT], .3, .1); // TODO: change .3
+            .rangeRoundBands([0, HEIGHT], .25, .15);
             
             y_scale.domain(data.map(function(d) { 
                 return d[group_by]; 
@@ -335,7 +337,9 @@
             
             debugger;   
             var count_labels = g_count.selectAll('text')
-                .data(count);
+                .data(count, function(d) {
+                    return d.Survived + d.Group;
+                });
                 
             count_labels.enter()
                 .append('text')
@@ -347,7 +351,7 @@
                     return is_surv(d.Survived) ? 'start' : 'end';
                 })
                 .attr('x', function(d) {
-                    return get_x_pos(d.Survived, d.Count + n_c_col * 2, 
+                    return get_x_pos(d.Survived, d.Count + n_c_col * 2 - 1, 
                             n_c_col);
                 })
                 .attr('y', function(d) {
@@ -358,13 +362,31 @@
                 .text(function(d) {
                     return d.Count;
                 })
-            /*
-                .transition()
+            
+            count_labels.transition()
+                .duration(350)
                 .attr('opacity', '0');
+                
+            count_labels.attr('x', function(d) {
+                    return get_x_pos(d.Survived, d.Count + n_c_col * 2 - 1, 
+                            n_c_col);
+                })
+                .attr('y', function(d) {
+                    var start = get_y_pos(d.Group, 0, n_c_col, y_scale);
+                    var end = get_y_pos(d.Group, n_c_col - 1, n_c_col, y_scale);
+                    return (start + end) / 2.0;
+                })
                 .transition()
-                .attr('opacity', '1')
-                .attr('
-            */
+                .delay(350)
+                .duration(350)
+                .attr('opacity', '1');
+            
+            count_labels.exit()
+                .transition()
+                .duration(350)
+                .attr('opacity', '0')
+                .remove();
+            
             
                 
         } 
