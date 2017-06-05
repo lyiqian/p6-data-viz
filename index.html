@@ -97,9 +97,11 @@
             HEIGHT = 500 - MARGIN,
             MID = WIDTH / 2 + MARGIN;
         
-        var RADIUS = 4.7;
-        var OFFSET = 1.5 * RADIUS;
-        var STEP = 2.5 * RADIUS;
+        /* Setting up constants for circles that represent passengers */
+        var RADIUS = 4.7; // selected by try-and-error
+        var SKIP = 0.5; // determining the empty space between circles
+        var OFFSET = RADIUS * (1 + SKIP); // the margins for circles
+        var STEP = RADIUS * (2 + SKIP); // the distance between 2 circle centers
         
         var DEFAULT_GROUP = "Sex";
 
@@ -119,7 +121,11 @@
         
         /* buttons for interaction */   
         var button_text = ["Gender", "Ticket Class"];
-        var text_to_group = {"Gender": "Sex", "Ticket Class": "Pclass"};
+        var text_to_group = {
+            "Gender": "Sex", 
+            "Ticket Class": "Pclass"
+        };
+        
         var button_table = d3.select('body')
             .append('table')
             .attr('class', 'button')
@@ -194,7 +200,7 @@
             .attr('class', 'count')
             .attr('transform', 'translate(0,' + MARGIN + ')');
             
-        /* Circles */   
+        /* Circles and tooltips */   
         var g_cir = svg.append('g')
             .attr('class', 'circles')
             .attr('transform', 'translate(0,' + MARGIN + ')');  
@@ -225,14 +231,15 @@
             .attr('r', RADIUS)
             .on('mouseover', tip.show)
             .on('mouseout', tip.hide);
-			
-		function get_x_pos(x_val, ind, n_c_col) {
-            var dir = is_surv(x_val) ? 1 : -1;
+		
+        /* helpers for calculating x and y pixel values given indices */
+		function get_x_pos(surv_died, ind, n_c_col) {
+            var dir = is_surv(surv_died) ? 1 : -1;
             return MID + dir * (OFFSET + Math.floor(ind / n_c_col) * STEP);
 		}
         
-        function get_y_pos(y_val, ind, n_c_col, y_scale) {
-            return y_scale(y_val) + OFFSET + (ind % n_c_col) * STEP;
+        function get_y_pos(group, ind, n_c_col, y_scale) {
+            return y_scale(group) + OFFSET + (ind % n_c_col) * STEP;
         }
 
         function draw_circles(g, group_data, group_by, y_scale, n_c_col) {
@@ -247,7 +254,6 @@
                 });
         }
         
-        
         function show(group_by, data, svg, g_cir, g_count) { 
             /* scales & axes */
             var y_scale = d3.scale.ordinal()
@@ -258,7 +264,6 @@
             }).sort());
             
             var y_axis = d3.svg.axis()
-    //          .scale(y_scale_perc)
                 .scale(y_scale)
                 .orient("left");
             
@@ -266,22 +271,31 @@
                 .transition().duration(700)
                 .call(y_axis);
             
-            var n_c_col 
-                = Math.floor((y_scale.rangeBand() / RADIUS - 0.5) / 2.5);
-
+            /* Equations used to find out the number of circles per column */
+            /*
+               Let N be the # of circles per column, we have:
+                   Bar Width = N * RADIUS * 2  (for N circles)
+                             + (N + 1) * RADIUS * SKIP (for N + 1 empty space)
+               Therefore, to calculate N given Bar Width:
+                   N = ((Bar Width) / RADIUS - SKIP) / (SKIP + 2)
+            */            
+            var bar_width = y_scale.rangeBand();
+            var n_c_col = Math.floor((bar_width / RADIUS - SKIP) / (SKIP + 2));
+            
+            /* preparing data for circles in different groups */
             var nested = d3.nest()
                 .key(function(d) { return d['Survived']; })
                 .key(function(d) { return d[group_by]; })
                 .entries(data)
-                                
+                
             var count = Array()
                 
             for (var i = 0; i <= 1; i++) {
-                //var survived = nested[i].key;
                 for (var j = 0; j < nested[i].values.length; j++) {
                     draw_circles(g_cir, nested[i].values[j].values, group_by, 
                             y_scale, n_c_col);
                     
+                    /* preparing data for count labels */
                     count.push({
                         'Survived': nested[i].key,
                         'Group': nested[i].values[j].key,
@@ -347,10 +361,6 @@
   </head>
 <body>
   <script type="text/javascript">
-    /*
-    Use D3 (not dimple.js) to load the TSV file
-    and pass the contents of it to the draw function
-    */
     d3.csv("titanic_data.csv", draw);
   </script>
 </body>
