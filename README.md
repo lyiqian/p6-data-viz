@@ -7,6 +7,7 @@ data. It could be seen as a bar chart that shows the discrenpencies of survival
 between different groups:
 - Men have a much lower survival rate than women.
 - Passengers with higher socio-economic class are more likely survived.
+
 With a deeper look, the bar chart was formed by circles that represent people.
 
 ## Design
@@ -43,4 +44,5 @@ Use one circle for each person, with some animation/interacition
 https://github.com/d3/d3-3.x-api-reference/blob/master/API-Reference.md
 
 http://bl.ocks.org/d3noob/8952219
+
 http://bl.ocks.org/Caged/6476579
