@@ -21,6 +21,9 @@ Visual encoding:
 
 Use one circle for each person, with some animation/interacition
 
+Link for the first iteration:
+http://bl.ocks.org/liu1000/raw/aff013679d9181cca1e901596d0166bc/
+
 ### Design changes after collecting feedback
 - adjusted empty space
 - added count labels for different "bars"

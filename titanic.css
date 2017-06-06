@@ -1,0 +1,82 @@
+body {
+  font-family: Georgia;
+}
+
+h2 {
+  color: black;
+  text-align: left;
+  padding: 20px;
+}
+
+table.button {
+  font-size: 0.8em;
+  position: fixed;
+  top: 80px;
+  left: 50px;
+}
+
+a {
+  padding: 2px;
+  margin: 5px;
+}
+
+a:link {
+  text-decoration: none;
+}
+
+a:hover {
+  background-color: orange;
+}
+
+.axis {
+  font-size: 0.8em;
+}
+
+path {
+  fill: none;
+  stroke: lightgray;
+  stroke-width: 1px;
+}
+
+.tick {
+  fill: none;
+  stroke: black;
+}
+
+text {
+  align-baseline: middle;
+}
+
+.surv{
+  fill: orange;
+  color: orange;
+  text-anchor: start;
+  font-weight: bold;
+}
+
+.died{
+  fill: rgb(100,100,100);
+  color: rgb(100,100,100);
+  text-anchor: end;
+  font-weight: bold;
+}
+
+circle.surv:hover {
+  fill: orangered;
+}
+circle.died:hover {
+  fill: rgb(0,0,0);
+}
+
+.cir-tip {
+  line-height: 1;
+  font-size: 12px;
+  padding: 5px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border-radius: 10px;
+}
+
+.bg {
+  opacity: 0.5;
+}
