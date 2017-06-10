@@ -157,6 +157,20 @@ function draw(data) {
         .attr('r', RADIUS)
         .on('mouseover', tip.show)
         .on('mouseout', tip.hide);
+        
+    var note = d3.select('body')
+        .append('p')
+        .attr('class', 'note')
+        
+    note.append('span')
+        .text("*Note: The dataset used for this visualization is a subset of the"
+                + " original dataset, which is from ")
+    note.append('span')
+        .append('a')
+        .attr('href', 'https://www.kaggle.com/c/titanic/data')
+        .text('Kaggle')
+    note.append('span')
+        .text('.')
     
     /* helpers for calculating x and y pixel values given indices */
     function get_x_pos(surv_died, ind, n_c_col) {

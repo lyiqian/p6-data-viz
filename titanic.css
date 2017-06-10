@@ -12,7 +12,7 @@ table.button {
   font-size: 0.8em;
   position: absolute;
   top: 80px;
-  left: 50px;
+  left: 55px;
 }
 
 table.comment {
@@ -20,7 +20,7 @@ table.comment {
   font-weight: bold;
   color: rgb(150,150,150);
   position: absolute;
-  top: 160px;
+  top: 150px;
   left: 80px;
   width: 280px;
 }
@@ -29,7 +29,7 @@ td.comment {
   text-align: justify;
 }
 
-a {
+a.button {
   padding: 2px;
   margin: 5px;
 }
@@ -89,6 +89,10 @@ circle.died:hover {
   background: rgba(0, 0, 0, 0.5);
   color: #fff;
   border-radius: 10px;
+}
+
+.note {
+  font-size: 0.7em; 
 }
 
 .bg {
