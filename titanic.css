@@ -10,9 +10,23 @@ h2 {
 
 table.button {
   font-size: 0.8em;
-  position: fixed;
+  position: absolute;
   top: 80px;
   left: 50px;
+}
+
+table.comment {
+  font-size: 0.8em;
+  font-weight: bold;
+  color: rgb(150,150,150);
+  position: absolute;
+  top: 160px;
+  left: 80px;
+  width: 280px;
+}
+
+td.comment {
+  text-align: justify;
 }
 
 a {

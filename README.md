@@ -24,6 +24,9 @@ Use one circle for each person, with some animation/interacition
 Link for the first iteration:
 http://bl.ocks.org/liu1000/raw/aff013679d9181cca1e901596d0166bc/
 
+Link for the second iteration:
+https://github.com/liu1000/p6-data-viz/tree/4668a0e3b8e06dcf3f2f6e0fdd3d47fac721634a
+
 ### Design changes after collecting feedback
 - adjusted empty space
 - added count labels for different "bars"

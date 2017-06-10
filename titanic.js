@@ -2,7 +2,7 @@ function draw(data) {
     "use strict";
     var MARGIN = 50,
         WIDTH = 1000 - MARGIN,
-        HEIGHT = 500 - MARGIN,
+        HEIGHT = 450 - MARGIN,
         MID = WIDTH / 2 + MARGIN;
     
     /* Setting up constants for circles that represent passengers */
@@ -25,7 +25,7 @@ function draw(data) {
     /* title */
     d3.select("body")
         .append("h2")
-        .text("Titanic Passenger Demographics (Partial)");
+        .text("Titanic Passenger Demographics");
     
     /* buttons for interaction */   
     var button_text = ["Gender", "Ticket Class"];
@@ -98,6 +98,24 @@ function draw(data) {
         .attr('y', MARGIN / 2)
         .text('Survived');
     
+    /* comments */
+    var text_to_comments = {
+        'Gender': "Men have a much lower survival rate than women: "
+                + "Four out of five men on Titanic died, "
+                + "while three out of four women survived.", 
+        'Ticket Class': "Passengers with higher socio-economic class "
+                + "are more likely survived: Less than 25% passengers from "
+                + "Class 3 survived, while Class 1 passengers have over 60% " 
+                + "survival rate."
+    }
+    var comment_td = d3.select('body')
+        .append('table')
+        .attr('class', 'comment')
+        .append('tr')
+        .append('td')
+        .attr('class', 'comment')
+        .text(text_to_comments['Gender']);
+                
     /* Axis */
     svg.append('g')
         .attr('class', 'y axis')
@@ -260,6 +278,12 @@ function draw(data) {
 
         d3.select(this)
             .style("border", "1.5px solid orangered");
+        
+        comment_td.transition().duration(350)
+            .style('opacity', '0')
+            .transition().duration(350)
+            .text(text_to_comments[d])
+            .style('opacity', '1');
             
         show(text_to_group[d], data, svg, g_cir, g_count);
     });
