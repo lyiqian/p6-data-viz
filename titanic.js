@@ -37,7 +37,7 @@ function draw(data) {
     var button_table = d3.select('body')
         .append('table')
         .attr('class', 'button')
-        .append('tr')
+        .append('tr');
         
     button_table.append('td')
         .text('Group By: ');
@@ -107,7 +107,7 @@ function draw(data) {
                 + "are more likely survived: Less than 25% passengers from "
                 + "Class 3 survived, while Class 1 passengers have over 60% " 
                 + "survival rate."
-    }
+    };
     var comment_td = d3.select('body')
         .append('table')
         .attr('class', 'comment')
@@ -157,20 +157,21 @@ function draw(data) {
         .attr('r', RADIUS)
         .on('mouseover', tip.show)
         .on('mouseout', tip.hide);
-        
+    
+    /* note */    
     var note = d3.select('body')
         .append('p')
-        .attr('class', 'note')
+        .attr('class', 'note');
         
     note.append('span')
         .text("*Note: The dataset used for this visualization is a subset of the"
-                + " original dataset, which is from ")
+                + " original dataset, which is from ");
     note.append('span')
         .append('a')
         .attr('href', 'https://www.kaggle.com/c/titanic/data')
-        .text('Kaggle')
+        .text('Kaggle');
     note.append('span')
-        .text('.')
+        .text('.');
     
     /* helpers for calculating x and y pixel values given indices */
     function get_x_pos(surv_died, ind, n_c_col) {
@@ -226,9 +227,9 @@ function draw(data) {
         var nested = d3.nest()
             .key(function(d) { return d['Survived']; })
             .key(function(d) { return d[group_by]; })
-            .entries(data)
+            .entries(data);
             
-        var count = Array()
+        var count = Array();
             
         for (var i = 0; i <= 1; i++) {
             for (var j = 0; j < nested[i].values.length; j++) {
@@ -267,7 +268,7 @@ function draw(data) {
             .attr('y', count_y_pos)
             .text(function(d) {
                 return d.Count;
-            })
+            });
         
         count_labels.transition().duration(350)
             .attr('opacity', '0');
