@@ -1,5 +1,5 @@
 # p6-data-viz
-Udacity DAND Project6 Data Visualization
+Udacity DAND Project6 Data Visualization [Demo](http://bl.ocks.org/liu1000/raw/aff013679d9181cca1e901596d0166bc/#)
 
 ## Summary
 This data visualization used various D3.js techniques to represent Titanic 
